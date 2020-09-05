@@ -6,12 +6,14 @@ const mongoose = require("mongoose");
 
 const productRoutes = require("./api/routes/products");
 const orderRoutes = require("./api/routes/orders");
+const userRoutes = require("./api/routes/user");
 
-mongoose.connect('mongodb://127.0.0.1:27017/ProductOrderDb', {useNewUrlParser: true, useUnifiedTopology:true});
+mongoose.connect('mongodb://127.0.0.1:27017/ProductOrderDb', {useMongoClient: true});
 
 mongoose.Promise = global.Promise;
 
 app.use(morgan("dev"));
+app.use('/images', express.static('images'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -32,6 +34,7 @@ app.use((req, res, next) => {
 // Routes which should handle requests
 app.use("/products", productRoutes);
 app.use("/orders", orderRoutes);
+app.use("/user", userRoutes);
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
