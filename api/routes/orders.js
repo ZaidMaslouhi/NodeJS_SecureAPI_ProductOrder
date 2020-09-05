@@ -1,12 +1,13 @@
 const express = require("express")
 const router = express.Router()
 const mongoose = require("mongoose")
+const check_auth = require("../middleware/check_auth")
 
 const Order = require("../models/order")
 const Product = require("../models/product")
 
 // Handle incoming GET requests to /orders
-router.get("/", (req, res, next) => {
+router.get("/", check_auth, (req, res, next) => {
   Order.find()
     .select("product quantity _id")
     .populate('product', 'name')
@@ -33,7 +34,7 @@ router.get("/", (req, res, next) => {
     })
 })
 
-router.post("/", (req, res, next) => {
+router.post("/",  check_auth, (req, res, next) => {
   Product.findById(req.body.productId)
     .then(product => {
       if (!product) {
@@ -71,7 +72,7 @@ router.post("/", (req, res, next) => {
     })
 })
 
-router.get("/:orderId", (req, res, next) => {
+router.get("/:orderId",  check_auth, (req, res, next) => {
   Order.findById(req.params.orderId)
     .populate('product')    
     .then(order => {
@@ -95,7 +96,7 @@ router.get("/:orderId", (req, res, next) => {
     })
 })
 
-router.delete("/:orderId", (req, res, next) => {
+router.delete("/:orderId",  check_auth, (req, res, next) => {
   Order.remove({ _id: req.params.orderId })    
     .then(result => {
       res.status(200).json({

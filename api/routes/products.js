@@ -24,7 +24,8 @@ const upload = multer({
   fileFilter: fileFilter
 })
 
-const Product = require("../models/product")
+const Product = require("../models/product");
+const check_auth = require("../middleware/check_auth");
 
 router.get("/", (req, res, next) => {
   Product.find()
@@ -61,7 +62,7 @@ router.get("/", (req, res, next) => {
     })
 })
 
-router.post("/", upload.single('productImage'), (req, res, next) => {
+router.post("/", check_auth, upload.single('productImage'), (req, res, next) => {
   // console.log(req.file)
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
@@ -120,7 +121,7 @@ router.get("/:productId", (req, res, next) => {
     })
 })
 
-router.patch("/:productId", (req, res, next) => {
+router.patch("/:productId", check_auth, (req, res, next) => {
   const id = req.params.productId
   const updateOps = {
     name: req.body.name,
@@ -145,7 +146,7 @@ router.patch("/:productId", (req, res, next) => {
     })
 })
 
-router.delete("/:productId", (req, res, next) => {
+router.delete("/:productId", check_auth, (req, res, next) => {
   const id = req.params.productId
   Product.remove({ _id: id })
     .then(result => {
